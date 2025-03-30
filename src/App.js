@@ -1,5 +1,27 @@
 import { useState } from "react";
 
+function triggerFallAnimation() {
+  document.querySelectorAll('.square').forEach((square) => {
+    square.classList.add('fall');
+  });
+}
+
+function triggerExplosion() {
+  document.querySelectorAll('.square').forEach((square) => {
+    const randomX = (Math.random() - 0.5) * 500 + "px";
+    const randomY = (Math.random() - 0.5) * 500 + "px";
+    
+    square.style.setProperty('--x', randomX);
+    square.style.setProperty('--y', randomY);
+    square.classList.add('explode');
+  });
+}
+
+function triggerEnlargeEffect() {
+  const statusText = document.querySelector('.status');
+  statusText.classList.add('enlarge-effect');
+}
+
 function Square({ value, onSquareClick }) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -40,8 +62,16 @@ export default function Board() {
   let status;
   if (winner) {
     status = "Winner: " + winner;
+    Math.random() < 0.5 ? triggerExplosion() : triggerFallAnimation();
+    triggerEnlargeEffect();
   } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
+    if(squares.every(item => item !== null)){
+      triggerExplosion();
+      status = "Draw!"
+      triggerEnlargeEffect();
+    }else{
+      status = "Next player: " + (xIsNext ? "X" : "O");
+    }
   }
 
   function handleClick(i) {
